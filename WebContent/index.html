@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+
+<title>Survey Management</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/Survey/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- Custom styles for this template -->
+<link href="/Survey/dist/css/dashboard.css" rel="stylesheet">
+
+
+<!-- data tables  -->
+<link rel="stylesheet" type="text/css"
+	href="/Survey/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css">
+<link rel="stylesheet" type="text/css"
+	href="/Survey/css/dataTables.editor.min.css">
+<script src="/Survey/js/jquery.js"></script>
+<script src="/Survey/js/jquery.dataTables.min.js"></script>
+<script
+	src="https://cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js"></script>
+<script src="/Survey/js/dataTables.editor.min.js"></script>
+
+<script>
+	var editor;
+	$(document).ready(function() {
+		editor = new $.fn.dataTable.Editor({
+			ajax : "/Survey/survey",
+			table : "#surveyTable",
+			idSrc : "DT_RowId",
+			fields : [ {
+				label : "Current Question:",
+				name : "cur_que"
+			}, {
+				label : "Question:",
+				name : "name"
+			}, {
+				label : "No of Options:",
+				name : "options"
+			}, {
+				label : "Next Question:",
+				name : "next_que"
+			}, {
+				label : "English Audio:",
+				name : "enaudio"
+			}, {
+				label : "Spanish Audio:",
+				name : "esaudio"
+			} ]
+		});
+
+		editor.on('preSubmit', function(e, o, action) {
+			var returnFlag = true;
+			if (action !== 'remove') {
+				if (o.data.cur_que === '') {
+					this.error('cur_que', 'Current question number required');
+					returnFlag = false;
+				}
+				if (o.data.name === '') {
+					this.error('name', 'Question required');
+					returnFlag = false;
+				}
+				if (o.data.options === '') {
+					this.error('options', 'Number of options required');
+					returnFlag = false;
+				}
+				if (o.data.next_que === '') {
+					this.error('next_que', 'Next question number required');
+					returnFlag = false;
+				}
+				if (o.data.enaudio === '') {
+					this.error('enaudio', 'English audio file name required');
+					returnFlag = false;
+				}
+				if (o.data.esaudio === '') {
+					this.error('esaudio', 'Spanish audio file name required');
+					returnFlag = false;
+				}
+			}
+			return returnFlag;
+		});
+
+		$('#surveyTable').dataTable({
+			dom : "Tfrtip",
+			idSrc : "DT_RowId",
+			pagingType : "full_numbers",
+			pageLength : "5",
+			ajax : {
+				url : "/Survey/survey"
+			},
+			columns : [ {
+				data : "cur_que"
+			}, {
+				data : "name"
+			}, {
+				data : "options"
+			}, {
+				data : "next_que"
+			}, {
+				data : "enaudio"
+			}, {
+				data : "esaudio"
+			} ],
+			tableTools : {
+				sRowSelect : "os",
+				aButtons : [ {
+					sExtends : "editor_create",
+					editor : editor
+				}, {
+					sExtends : "editor_edit",
+					editor : editor
+				}, {
+					sExtends : "editor_remove",
+					editor : editor
+				} ]
+			}
+		});
+	});
+</script>
+<style>
+table
+{
+font-family:"Arial", Georgia;
+font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a target="_blank" href="http://spinsci.com/"> <img
+					class="logo-main logo-reg"
+					src="http://snap.spinsci.com/wp-content/uploads/2015/04/SpinSciLogo-360x100.png"
+					alt="Snap" height="40" width="144">
+				</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Help</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-3 col-md-2 sidebar">
+				<ul class="nav nav-sidebar">
+					<li class="active"><a href="#">Survey Management<span
+							class="sr-only">(current)</span></a></li>
+				</ul>
+			</div>
+			<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+				<h2 class="page-header">Survey</h2>
+				<h4 class="sub-header">Some info about Survey here and
+					instructions</h4>
+				<div class="table-responsive">
+					<p>
+					<table id="surveyTable" class="display table table-striped">
+						<thead>
+							<tr>
+								<th>Current Question</th>
+								<th>Question</th>
+								<th>No of Options</th>
+								<th>Next Question</th>
+								<th>English Audio</th>
+								<th>Spanish Audio</th>
+							</tr>
+						</thead>
+					</table>
+					<p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
